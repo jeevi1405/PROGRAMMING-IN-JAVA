@@ -1,0 +1,21 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "AppServer",
+            "request": "launch",
+            "mainClass": "com.simats.analytics.server.AppServer",
+            "projectName": "skill_progress_analytics_6b98815d"
+        },
+        {
+            "type": "msedge",
+            "request": "launch",
+            "name": "Open index.html",
+            "file": "c:\\Users\\JEEVAN KUMAR\\OneDrive\\Desktop\\skill_progress_analytics\\web\\index.html"
+        }
+    ]
+}
