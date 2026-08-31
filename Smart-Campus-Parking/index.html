@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Campus Parking & Traffic Management Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-surface: #334155;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --accent-cyan: #06b6d4;
+            --accent-emerald: #10b981;
+            --accent-rose: #ef4444;
+            --accent-amber: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #0b1120;
+            border-bottom: 1px solid var(--border);
+            padding: 16px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .brand-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-primary);
+        }
+
+        .brand-sub {
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            font-weight: 500;
+        }
+
+        .live-status {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .badge-pill {
+            padding: 4px 10px;
+            border-radius: 9999px;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-emerald);
+            font-weight: 600;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+            width: 100%;
+            flex: 1;
+        }
+
+        /* KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; bottom: 0;
+            width: 4px;
+            background: var(--card-accent, var(--primary));
+        }
+
+        .kpi-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .kpi-val {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .kpi-sub {
+            font-size: 0.75rem;
+            color: var(--card-accent, var(--text-secondary));
+            font-weight: 500;
+        }
+
+        /* Nav Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 10px 18px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover { color: var(--text-primary); background: rgba(255, 255, 255, 0.05); }
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Card Section */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 2D Grid */
+        .slots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+        }
+
+        .slot-box {
+            background: var(--bg-surface);
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .slot-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .slot-box.Available {
+            background: rgba(16, 185, 129, 0.12);
+            border-color: var(--accent-emerald);
+        }
+
+        .slot-box.Occupied {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: var(--accent-rose);
+        }
+
+        .slot-box.Reserved {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: var(--accent-amber);
+        }
+
+        .slot-box.Maintenance {
+            background: rgba(100, 116, 139, 0.15);
+            border-color: var(--text-secondary);
+        }
+
+        .slot-hdr {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .slot-badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .slot-plate {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-top: 4px;
+        }
+
+        /* Forms */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        input, select {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .btn:hover { background: var(--primary-hover); }
+        .btn-emerald { background: var(--accent-emerald); }
+        .btn-emerald:hover { background: #059669; }
+        .btn-rose { background: var(--accent-rose); }
+        .btn-rose:hover { background: #dc2626; }
+        .btn-secondary { background: var(--bg-surface); color: var(--text-primary); }
+        .btn-secondary:hover { background: var(--border); }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        tr:hover td { background: rgba(255, 255, 255, 0.03); }
+
+        /* Legend */
+        .legend-bar {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+            font-size: 0.8rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 10px; height: 10px;
+            border-radius: 3px;
+        }
+
+        /* Split layout */
+        .split-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .split-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>
+            <div class="brand-title">🚗 SMART CAMPUS PARKING & TRAFFIC PORTAL</div>
+            <div class="brand-sub">Dept. of Computer Science & Engineering | CSA09 Programming in Java (CO4 & CO5) | SDG 9, 11, 13</div>
+        </div>
+        <div class="live-status">
+            <span class="badge-pill">● System Online</span>
+            <span id="live-clock">Loading time...</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Top KPIs -->
+        <div class="kpi-grid">
+            <div class="kpi-card" style="--card-accent: var(--primary);">
+                <div class="kpi-title">Total Capacity</div>
+                <div class="kpi-val" id="kpi-total">52</div>
+                <div class="kpi-sub">Across 6 Campus Zones</div>
+            </div>
+            <div class="kpi-card" style="--card-accent: var(--accent-rose);">
+                <div class="kpi-title">Occupied Slots</div>
+                <div class="kpi-val" id="kpi-occupied">10</div>
+                <div class="kpi-sub">Vehicles Parked</div>
+            </div>
+            <div class="kpi-card" style="--card-accent: var(--accent-emerald);">
+                <div class="kpi-title">Available Slots</div>
+                <div class="kpi-val" id="kpi-available">39</div>
+                <div class="kpi-sub">Ready to Park</div>
+            </div>
+            <div class="kpi-card" style="--card-accent: var(--accent-cyan);">
+                <div class="kpi-title">Occupancy Rate</div>
+                <div class="kpi-val" id="kpi-rate">19.2%</div>
+                <div class="kpi-sub">Optimal Traffic Flow</div>
+            </div>
+            <div class="kpi-card" style="--card-accent: var(--accent-purple);">
+                <div class="kpi-title">Total Revenue</div>
+                <div class="kpi-val" id="kpi-revenue">₹ 7,144</div>
+                <div class="kpi-sub">Realized Collections</div>
+            </div>
+            <div class="kpi-card" style="--card-accent: var(--accent-amber);">
+                <div class="kpi-title">Unpaid Penalties</div>
+                <div class="kpi-val" id="kpi-violations">2</div>
+                <div class="kpi-sub">Active Violations</div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('tab-map')">🗺️ 2D Interactive Lot Map</button>
+            <button class="tab-btn" onclick="switchTab('tab-terminals')">🚗 Gate Check-In & Exit</button>
+            <button class="tab-btn" onclick="switchTab('tab-sessions')">🅿️ Active Parked Sessions</button>
+            <button class="tab-btn" onclick="switchTab('tab-passes')">🎟️ Parking Passes & Permits</button>
+            <button class="tab-btn" onclick="switchTab('tab-violations')">🚨 Traffic Violations</button>
+            <button class="tab-btn" onclick="switchTab('tab-analytics')">📊 Zone Telemetry & Analytics</button>
+        </div>
+
+        <!-- TAB 1: 2D Visual Map -->
+        <div id="tab-map" class="tab-content active">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🗺️ Real-Time 2D Visual Parking Space Allocator</div>
+                    <div>
+                        <button class="btn btn-secondary" onclick="fetchSlots()">🔄 Refresh Slots</button>
+                    </div>
+                </div>
+                <div class="slots-grid" id="slots-container">
+                    <!-- Populated via JS -->
+                </div>
+                <div class="legend-bar">
+                    <div class="legend-item"><div class="dot" style="background: var(--accent-emerald);"></div> Available (Open)</div>
+                    <div class="legend-item"><div class="dot" style="background: var(--accent-rose);"></div> Occupied (Parked)</div>
+                    <div class="legend-item"><div class="dot" style="background: var(--accent-amber);"></div> Reserved (Booked)</div>
+                    <div class="legend-item"><div class="dot" style="background: var(--text-secondary);"></div> Maintenance</div>
+                    <div class="legend-item"><div class="dot" style="background: var(--accent-cyan);"></div> ⚡ EV Fast-Charge</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: Terminals (Entry & Exit) -->
+        <div id="tab-terminals" class="tab-content">
+            <div class="split-grid">
+                <!-- Entry Form -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title" style="color: var(--accent-cyan);">🚗 Vehicle Entry Gate Check-In</div>
+                    </div>
+                    <form id="entry-form" onsubmit="handleEntry(event)">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Plate Number</label>
+                                <input type="text" id="entry-plate" placeholder="e.g. KA-01-AB-1234" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Vehicle Type</label>
+                                <select id="entry-type">
+                                    <option value="Car">Car</option>
+                                    <option value="2-Wheeler">2-Wheeler</option>
+                                    <option value="EV">EV (20% Green Subsidy)</option>
+                                    <option value="Bus">Bus / Logistics</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Driver / Owner Name</label>
+                                <input type="text" id="entry-owner" placeholder="Student / Faculty Name">
+                            </div>
+                            <div class="form-group">
+                                <label>User Category</label>
+                                <select id="entry-user-type">
+                                    <option value="Student">Student (25% Concession)</option>
+                                    <option value="Faculty">Faculty (40% Benefit)</option>
+                                    <option value="Staff">Staff (30% Subsidy)</option>
+                                    <option value="Visitor">Visitor (Standard)</option>
+                                    <option value="Vendor">Vendor / Service</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-emerald">🎟️ Issue Ticket & Authorize Entry</button>
+                        <span id="entry-msg" style="margin-left: 12px; font-size: 0.85rem;"></span>
+                    </form>
+                </div>
+
+                <!-- Exit Form -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title" style="color: var(--accent-emerald);">📤 Vehicle Exit & Settle Bill</div>
+                    </div>
+                    <form id="exit-form" onsubmit="handleExit(event)">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Ticket Number</label>
+                                <input type="text" id="exit-ticket" placeholder="e.g. TCK-20260831-1001" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Payment Method</label>
+                                <select id="exit-payment">
+                                    <option value="UPI">UPI Instant</option>
+                                    <option value="Card">Credit / Debit Card</option>
+                                    <option value="CampusCard">Campus Smart Card</option>
+                                    <option value="Cash">Cash at Counter</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-emerald">💳 Settle Bill & Free Slot (CallableStatement)</button>
+                        <span id="exit-msg" style="margin-left: 12px; font-size: 0.85rem;"></span>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: Active Sessions -->
+        <div id="tab-sessions" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🅿️ Currently Active Parking Sessions</div>
+                    <button class="btn btn-secondary" onclick="fetchSessions()">🔄 Refresh</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ticket No</th>
+                                <th>Plate Number</th>
+                                <th>Type</th>
+                                <th>Owner</th>
+                                <th>Slot</th>
+                                <th>Zone</th>
+                                <th>Entry Time</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sessions-tbody">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: Passes -->
+        <div id="tab-passes" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🎟️ Active Campus Parking Passes & Permits</div>
+                    <button class="btn btn-secondary" onclick="fetchPasses()">🔄 Refresh</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Pass Number</th>
+                                <th>Owner Name</th>
+                                <th>Plate Number</th>
+                                <th>Pass Type</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="passes-tbody">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: Violations -->
+        <div id="tab-violations" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title" style="color: var(--accent-rose);">🚨 Traffic & Parking Violations (CallableStatement)</div>
+                    <button class="btn btn-secondary" onclick="fetchViolations()">🔄 Refresh</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ticket No</th>
+                                <th>Plate Number</th>
+                                <th>Violation Type</th>
+                                <th>Fine (INR)</th>
+                                <th>Status</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody id="violations-tbody">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 6: Analytics -->
+        <div id="tab-analytics" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">📊 Campus Zone Utilization Telemetry (SQL Views)</div>
+                    <button class="btn btn-secondary" onclick="fetchZones()">🔄 Refresh</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Zone Code</th>
+                                <th>Zone Name</th>
+                                <th>Category</th>
+                                <th>Total Slots</th>
+                                <th>Occupied</th>
+                                <th>Available</th>
+                                <th>Occupancy Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody id="zones-tbody">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Clock
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('live-clock').innerText = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + ' • ' + now.toLocaleTimeString();
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Tabs
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Fetch KPIs
+        async function fetchKpis() {
+            try {
+                const res = await fetch('/api/kpis');
+                const data = await res.json();
+                document.getElementById('kpi-total').innerText = data.totalSlots || 52;
+                document.getElementById('kpi-occupied').innerText = data.occupiedSlots || 0;
+                document.getElementById('kpi-available').innerText = data.availableSlots || 0;
+                document.getElementById('kpi-rate').innerText = (data.occupancyRate || 0) + '%';
+                document.getElementById('kpi-revenue').innerText = '₹ ' + (data.totalRevenue || 0).toFixed(2);
+                document.getElementById('kpi-violations').innerText = data.activeViolations || 0;
+            } catch (e) { console.error(e); }
+        }
+
+        // Fetch Slots
+        async function fetchSlots() {
+            try {
+                const res = await fetch('/api/slots');
+                const slots = await res.json();
+                const container = document.getElementById('slots-container');
+                container.innerHTML = '';
+                slots.forEach(s => {
+                    const box = document.createElement('div');
+                    box.className = `slot-box ${s.status}`;
+                    const isEV = s.slotType === 'EV';
+                    box.innerHTML = `
+                        <div class="slot-hdr">
+                            <span>${s.slotNumber}</span>
+                            <span class="slot-badge">${isEV ? '⚡ EV' : s.slotType}</span>
+                        </div>
+                        <div style="font-size:0.75rem; color:var(--text-secondary);">${s.zoneCode}</div>
+                        ${s.plateNumber ? `<div class="slot-plate">${s.plateNumber}</div>` : `<div style="font-size:0.75rem; color:var(--accent-emerald); font-weight:600;">${s.status}</div>`}
+                    `;
+                    box.onclick = () => {
+                        if (s.status === 'Occupied') {
+                            document.getElementById('exit-ticket').value = s.slotNumber;
+                            switchTab('tab-terminals');
+                        }
+                    };
+                    container.appendChild(box);
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        // Fetch Sessions
+        async function fetchSessions() {
+            try {
+                const res = await fetch('/api/sessions');
+                const sessions = await res.json();
+                const tbody = document.getElementById('sessions-tbody');
+                tbody.innerHTML = '';
+                sessions.forEach(s => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><b>${s.ticketNo}</b></td>
+                        <td style="font-family:'JetBrains Mono'">${s.plateNumber}</td>
+                        <td>${s.vehicleType}</td>
+                        <td>${s.userName}</td>
+                        <td>${s.slotNumber}</td>
+                        <td>${s.zoneCode}</td>
+                        <td>${s.entryTime}</td>
+                        <td><button class="btn btn-secondary" style="padding:4px 10px; font-size:0.75rem;" onclick="loadExit('${s.ticketNo}')">Checkout</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        function loadExit(tNo) {
+            document.getElementById('exit-ticket').value = tNo;
+            switchTab('tab-terminals');
+        }
+
+        // Fetch Passes
+        async function fetchPasses() {
+            try {
+                const res = await fetch('/api/passes');
+                const passes = await res.json();
+                const tbody = document.getElementById('passes-tbody');
+                tbody.innerHTML = '';
+                passes.forEach(p => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><b>${p.passNo}</b></td>
+                        <td>${p.userName}</td>
+                        <td style="font-family:'JetBrains Mono'">${p.plate}</td>
+                        <td>${p.type}</td>
+                        <td><span class="badge-pill">${p.status}</span></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        // Fetch Violations
+        async function fetchViolations() {
+            try {
+                const res = await fetch('/api/violations');
+                const vios = await res.json();
+                const tbody = document.getElementById('violations-tbody');
+                tbody.innerHTML = '';
+                vios.forEach(v => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><b>${v.ticketNo}</b></td>
+                        <td style="font-family:'JetBrains Mono'">${v.plateNumber}</td>
+                        <td>${v.type}</td>
+                        <td style="color:var(--accent-rose); font-weight:700;">₹ ${v.fine}</td>
+                        <td><span style="color:${v.status==='Paid'?'var(--accent-emerald)':'var(--accent-rose)'}; font-weight:600;">${v.status}</span></td>
+                        <td>${v.remarks}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        // Fetch Zones
+        async function fetchZones() {
+            try {
+                const res = await fetch('/api/zones');
+                const zones = await res.json();
+                const tbody = document.getElementById('zones-tbody');
+                tbody.innerHTML = '';
+                zones.forEach(z => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><b>${z.zoneCode}</b></td>
+                        <td>${z.zoneName}</td>
+                        <td>${z.allowedType}</td>
+                        <td>${z.totalSlots}</td>
+                        <td style="color:var(--accent-rose); font-weight:700;">${z.occupied}</td>
+                        <td style="color:var(--accent-emerald); font-weight:700;">${z.available}</td>
+                        <td><b>${z.occupancyRate}%</b></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        // Form Handlers
+        async function handleEntry(e) {
+            e.preventDefault();
+            const plate = document.getElementById('entry-plate').value;
+            const type = document.getElementById('entry-type').value;
+            const owner = document.getElementById('entry-owner').value;
+            const userType = document.getElementById('entry-user-type').value;
+
+            const res = await fetch('/api/entry', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ plate, type, owner, userType })
+            });
+            const data = await res.json();
+            const msgEl = document.getElementById('entry-msg');
+            if (data.success) {
+                msgEl.innerHTML = `<span style="color:var(--accent-emerald)">✅ ${data.message} (Ticket: ${data.ticketNo})</span>`;
+                document.getElementById('entry-plate').value = '';
+                refreshAll();
+            } else {
+                msgEl.innerHTML = `<span style="color:var(--accent-rose)">❌ ${data.message}</span>`;
+            }
+        }
+
+        async function handleExit(e) {
+            e.preventDefault();
+            const ticket = document.getElementById('exit-ticket').value;
+            const paymentMethod = document.getElementById('exit-payment').value;
+
+            const res = await fetch('/api/exit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ticket, paymentMethod })
+            });
+            const data = await res.json();
+            const msgEl = document.getElementById('exit-msg');
+            if (data.success) {
+                msgEl.innerHTML = `<span style="color:var(--accent-emerald)">✅ Exit Processed! Fee Paid: ₹${data.finalFee.toFixed(2)} (${data.duration} mins)</span>`;
+                document.getElementById('exit-ticket').value = '';
+                refreshAll();
+            } else {
+                msgEl.innerHTML = `<span style="color:var(--accent-rose)">❌ ${data.message}</span>`;
+            }
+        }
+
+        function refreshAll() {
+            fetchKpis();
+            fetchSlots();
+            fetchSessions();
+            fetchPasses();
+            fetchViolations();
+            fetchZones();
+        }
+
+        refreshAll();
+        setInterval(fetchKpis, 5000);
+    </script>
+</body>
+</html>

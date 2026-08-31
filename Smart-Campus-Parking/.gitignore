@@ -1,0 +1,22 @@
+# Compiled Java Bytecode
+bin/
+*.class
+*.jar
+!lib/mysql-connector-j-9.3.0.jar
+
+# IDE & Editor files
+.idea/
+*.iml
+.vscode/
+*.swp
+*.bak
+
+# OS generated files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Local properties / output files
+*.log
+*.csv
+db_config.properties
